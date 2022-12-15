@@ -68,8 +68,12 @@ require_once("header.php");
                                     <?php endif ?>
                                 </ul>
                             </div>
+                            <?php if (isset($row['post_image'])) : ?>
+                                <div class="d-flex justify-content-center">
+                                    <img src="uploads/<?= $row['post_image'] ?>" class="card-img-top w-50" alt="Image of <?= $row['post_title'] ?>">
+                                </div>
+                            <?php endif ?>
                             <div class="card-body">
-                                <img src="..." class="card-img-top" alt="Image of <?= $row['post_title'] ?>">
                                 <p class="card-text text-start"><?= $row['post_content'] ?></p>
                                 <div class="card-footer text-muted">
                                     <p><small><?= date('F j, o, g:i a', strtotime($row['post_date'])) ?></small></p>
@@ -86,16 +90,14 @@ require_once("header.php");
                                         <form action="process_post.php" method="post">
                                             <label for="post_comment" class="form-label">Comment:</label>
                                             <textarea class="form-control" name="post_comment" id="post_comment" rows="5"></textarea>
-                                            <div class="pt-3">
-                                                <input type="hidden" name="post_id" value="<?= $row['post_id'] ?>">
-                                                <button type="submit" name="command" value="Comment" class="btn btn-primary btn-sm">Post</button>
-                                            </div>
+                                            <input type="hidden" name="post_id" value="<?= $row['post_id'] ?>">
+                                            <button type="submit" name="command" value="Comment" class="btn btn-primary btn-sm">Post</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
                         <?php endif ?>
-                        <div class="card m-5">
+                        <div class="card m-3">
                             <div class="card-header">
                                 Comments:
                             </div>
