@@ -29,7 +29,7 @@ $content = filter_input(INPUT_POST, 'post_content', FILTER_SANITIZE_FULL_SPECIAL
 $id = filter_input(INPUT_POST, 'post_id', FILTER_SANITIZE_NUMBER_INT);
 $valid = !empty($title) && !empty($content) && strlen($title) > 0 && strlen($content) > 0 ? true : false;
 $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
-$image = null;
+$removeImage = isset($_POST['imageCommand']) && $_POST['imageCommand'] === "RemoveImage" ? true : false;
 
 $comment = filter_input(INPUT_POST, 'post_comment', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $validComment = !empty($comment) && strlen($comment) > 0 ? true : false;
@@ -51,18 +51,36 @@ if (isset($_POST['command']) && $_POST['command'] === "Update" && $valid) {
 
         if (file_is_an_image($temporary_image_path, $new_image_path) && $valid) {
             move_uploaded_file($temporary_image_path, $new_image_path);
-            $image = $_FILES['image']['name'];
         } else {
             header("location:process_post.php");
             exit();
         }
+    } else if ($removeImage) {
+        $queryImage = "SELECT * FROM post WHERE post_id = :post_id";
+        $statementImage = $db->prepare($queryImage);
+        $statementImage->bindValue(':post_id', $id, PDO::PARAM_INT);
+        $statementImage->execute();
+        $row = $statementImage->fetch();
+        $image_filename = $row['post_image'];
+
+        if (file_exists("uploads")) {
+            unlink("uploads/" . $image_filename);
+            $image_filename = null;
+        }
+    } else {
+        $queryImage = "SELECT * FROM post WHERE post_id = :post_id";
+        $statementImage = $db->prepare($queryImage);
+        $statementImage->bindValue(':post_id', $id, PDO::PARAM_INT);
+        $statementImage->execute();
+        $row = $statementImage->fetch();
+        $image_filename = $row['post_image'];
     }
 
     $query = "UPDATE post SET post_title = :post_title, post_content = :post_content, post_image = :post_image WHERE post_id = :post_id LIMIT 1";
     $statement = $db->prepare($query);
     $statement->bindValue(':post_title', $title);
     $statement->bindValue(':post_content', $content);
-    $statement->bindValue(':post_image', $image);
+    $statement->bindValue(':post_image', $image_filename);
     $statement->bindValue(':post_id', $id, PDO::PARAM_INT);
     $statement->execute();
     header("location:blog.php");

@@ -30,7 +30,6 @@ $content = filter_input(INPUT_POST, 'post_content', FILTER_SANITIZE_FULL_SPECIAL
 $valid = !empty($title) && !empty($content) && strlen($title) > 0 && strlen($content) > 0 ? true : false;
 $error = false;
 $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
-$image = null;
 
 if ($image_upload_detected) {
     $image_filename       = $_FILES['image']['name'];
@@ -39,7 +38,6 @@ if ($image_upload_detected) {
 
     if (file_is_an_image($temporary_image_path, $new_image_path) && $valid) {
         move_uploaded_file($temporary_image_path, $new_image_path);
-        $image = $_FILES['image']['name'];
     } else {
         $error = true;
     }
@@ -50,7 +48,7 @@ if ($valid & !$error) {
     $statement = $db->prepare($query);
     $statement->bindValue(':post_title', $title);
     $statement->bindValue(':post_content', $content);
-    $statement->bindValue(':post_image', $image);
+    $statement->bindValue(':post_image', $image_filename);
     $statement->bindValue(':user_id', $_SESSION['id']);
     $statement->execute();
     header("location:blog.php");
