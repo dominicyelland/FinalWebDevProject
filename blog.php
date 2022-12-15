@@ -4,23 +4,20 @@ $query = "SELECT * FROM post ORDER BY post_date DESC LIMIT 10";
 $statement = $db->prepare($query);
 $statement->execute();
 
-$querySecond = "SELECT * FROM post ORDER BY post_date DESC";
-$statementSecond = $db->prepare($querySecond);
-$statementSecond->execute();
+$sort = "post_date DESC";
 
-$sort = filter_input(INPUT_GET, 'sortBy', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$isSorted = false;
-
-// STILL DOESNT WORK
-if (isset($_GET['sortBy']) && ($_GET['sortBy'] == 'post_title' || $_GET['sortBy'] == 'post_date' || $_GET['sortBy'] == 'post_content')) {
-  $isSorted = true;
-
-  $queryThird = "SELECT * FROM post ORDER BY :sortBy";
-  $statementThird = $db->prepare($queryThird);
-  $statementThird->bindValue(':sortBy', $_GET['sortBy']);
-  $statementThird->execute();
+if (isset($_GET['sortBy']) && $_GET['sortBy'] === 'post_title') {
+  $sort = filter_input(INPUT_GET, 'sortBy', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $sort .= " ASC";
 }
 
+if (isset($_GET['sortBy']) && $_GET['sortBy'] === 'post_date_asc') {
+  $sort = "post_date";
+}
+
+$querySecond = "SELECT * FROM post ORDER BY $sort";
+$statementSecond = $db->prepare($querySecond);
+$statementSecond->execute();
 
 $pagename = "Dominic's Blog";
 $sitename = "Dominic's Porfolio Website";
@@ -81,20 +78,13 @@ require_once("header.php");
               </button>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="blog.php?sortBy=post_title">Title</a></li>
-                <li><a class="dropdown-item" href="blog.php?sortBy=post_date">Date</a></li>
-                <li><a class="dropdown-item" href="blog.php?sortBy=post_content">Content</a></li>
+                <li><a class="dropdown-item" href="blog.php?sortBy=post_date">New to Old</a></li>
+                <li><a class="dropdown-item" href="blog.php?sortBy=post_date_asc">Old to New</a></li>
               </ul>
             </div>
-            <!-- DOESNT WORK -->
-            <?php if (!$isSorted) : ?>
-              <?php while ($content = $statementSecond->fetch()) : ?>
-                <a href="show.php?post_id=<?= $content['post_id'] ?>" class="list-group-item"><?= $content['post_title'] ?></a>
-              <?php endwhile ?>
-            <?php else : ?>
-              <?php while ($content = $statementThird->fetch()) : ?>
-                <a href="show.php?post_id=<?= $content['post_id'] ?>" class="list-group-item"><?= $content['post_title'] ?></a>
-              <?php endwhile ?>
-            <?php endif ?>
+            <?php while ($content = $statementSecond->fetch()) : ?>
+              <a href="show.php?post_id=<?= $content['post_id'] ?>" class="list-group-item"><?= $content['post_title'] ?></a>
+            <?php endwhile ?>
           </div>
         </div>
       </div>
