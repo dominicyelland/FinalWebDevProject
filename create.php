@@ -41,7 +41,7 @@ require_once("header.php");
                                 </ul>
                             </div>
                             <div class="card-body">
-                                <form action="create.php" method="post">
+                                <form action="create.php" method="post" enctype="multipart/form-data">
                                     <div class="mb-3">
                                         <label for="post_title" class="form-label">Title</label>
                                         <input type="text" class="form-control" name="post_title" id="post_title">
@@ -51,8 +51,8 @@ require_once("header.php");
                                         <textarea class="form-control" name="post_content" id="post_content" rows="15"></textarea>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="formFile" class="form-label">Upload Image</label>
-                                        <input class="form-control" type="file" id="formFile">
+                                        <label for="image" class="form-label">Upload Image</label>
+                                        <input class="form-control" type="file" name="image" id="image">
                                     </div>
                                     <div class="text-center">
                                         <button type="submit" name="command" value="Create" class="btn btn-primary">Submit</button>
