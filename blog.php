@@ -78,8 +78,8 @@ require_once("header.php");
               </button>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="blog.php?sortBy=post_title">Title</a></li>
-                <li><a class="dropdown-item" href="blog.php?sortBy=post_date">New to Old</a></li>
-                <li><a class="dropdown-item" href="blog.php?sortBy=post_date_asc">Old to New</a></li>
+                <li><a class="dropdown-item" href="blog.php?sortBy=post_date">Newest to Oldest</a></li>
+                <li><a class="dropdown-item" href="blog.php?sortBy=post_date_asc">Oldest to Newest</a></li>
               </ul>
             </div>
             <?php while ($content = $statementSecond->fetch()) : ?>
